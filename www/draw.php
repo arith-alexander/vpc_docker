@@ -92,6 +92,17 @@ switch ( $lotteryId ) {
         $lotteryImg = '<img class="lottery-image" src="/img/kiti.png" alt="吉" />';
         break;
 }
+
+// テーマの一覧とその内容を取得する
+$sql = <<<___EOS___
+SELECT f.id, content, t.name, f.pattern_id
+FROM fortune f
+LEFT JOIN theme t on f.theme_id = t.id
+WHERE f.pattern_id = $lotteryId
+___EOS___;
+$stmt = $pdo->query($sql);
+$themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -99,6 +110,7 @@ switch ( $lotteryId ) {
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="/css/draw.css">
+        <link rel="stylesheet" type="text/css" href="/css/reset.css">
         <script>
             $(document).ready(function() {
                 $('body').fadeIn(3000);
@@ -110,6 +122,12 @@ switch ( $lotteryId ) {
     <body>
         <div class="lottery">
             <?php echo $lotteryImg; ?>
+        </div>
+        <div class="lottery-contents <?php if($themes[0]["pattern_id"] == TYOUKITI_PATTERN_ID) echo "lottery-contents-choukiti"; ?>">
+            <?php foreach($themes as $theme) { ?>
+                <div class="theme-name <?php if($theme["pattern_id"] == TYOUKITI_PATTERN_ID) echo "theme-name-choukiti"; ?>"><?=$theme["name"]?></div>
+                <div class="fortune-contents"><?=$theme["content"]?></div>
+            <? } ?>
         </div>
     </body>
 </html>
