@@ -1,33 +1,29 @@
-<?php
-try {
-    $host = getenv('MYSQL_HOST');
-    $user = getenv('MYSQL_USER');
-    $password = getenv('MYSQL_PASSWORD');
-    $database = getenv('MYSQL_DATABASE');
-    $charset = getenv('MYSQL_CHARSET');
+<!DOCTYPE html>
+<html>
 
-    $pdo = new PDO("mysql:host={$host};dbname={$database};charset={$charset}", $user, $password,
-        array(PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/index.css">
+        <meta charset='utf-8'>
+        <title>おみくじ</title>
+    </head>
 
-    $insert = <<<___EOS___
-INSERT INTO members (name, age, created, modified, deleted, sex) 
-VALUES (:name, :age, now(), now(), 0, :sex)
-___EOS___;
+    <body>
 
-    $stmt = $pdo->prepare($insert);
+        <div class="intro">
+            <h1>おみくじ</h1>
+            <div class="intro-text">
+                おみくじ（御神籤・御御籤・御仏籤またはみくじ・神籤・御籤・御鬮・仏籤）とは<br>
+                神社・仏閣等で吉凶を占うために引く籤である。「みくじ」は「くじ」に尊敬の接頭辞「み」をくわえたもので、漢字で書くときは「御籤」とするか、<br/>
+                神社のものは「神籤」、寺のものは「仏籤」とする。ただし厳密には問題があるが、区別せず「神籤」とすることもある。現在ではみくじ箋（みくじ紙）と呼ばれる紙片を用いるものが一般的である。
+            </div>
+        </div>
+        <div class="start-button">
+            <img class="click-image" src="/img/click.jpeg" alt="クリックしてね" />
+            <a href="draw.php">
+                <img class="omikuji-image" src="/img/omikuji.gif" alt="おみくじを引く" />
+            </a>
+        </div>
 
-    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-    $stmt->bindValue(':age', 14, PDO::PARAM_INT);
-    $stmt->bindValue(':sex', 0, PDO::PARAM_INT);
-    $name = '太郎';
-    $ret = $stmt->execute();
-
-    $stmt = $pdo->query("SELECT * FROM members");
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        echo join("|", $row) . "<br>\n";
-    }
-
-
-} catch (PDOException $e) {
-    exit('データベース接続失敗。' . $e->getMessage());
-}
+    </body>
+</html>
