@@ -1,5 +1,38 @@
 /* draw.php */
 
+.lottery, .lottery-contents{
+    position:absolute;
+}
+
+.lottery-contents {
+    margin-top:3%;
+    font-size:1.8vw;
+    color: #f23524;
+}
+
+.theme-name{
+    margin-top:8%;
+    margin-left:25%;
+    font-size:3vw;
+    color:#f23524;
+    text-shadow: -1px 0 #ffc4bf, 0 1px #ffc4bf, 1px 0 #ffc4bf, 0 -1px #ffc4bf;
+
+}
+
+.theme-name-choukiti {
+    color: #ffa500 !important;
+    text-shadow: -1px 0 #ffdb99, 0 1px #ffdb99, 1px 0 #ffdb99, 0 -1px #ffdb99 !important;
+}
+
+.lottery-contents-choukiti {
+    color: #ffa500 !important;
+}
+
+.fortune-contents{
+    margin-top:5%;
+    margin-left:25%;
+}
+
 .lottery-image {
     width:100%
 }
