@@ -16,17 +16,19 @@ try {
     $pdo = new PDO("mysql:host={$host};dbname={$database};charset={$charset}", $user, $password,
         array(PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
+    // 元々のくじ数を取得
     $stmt = $pdo->query("SELECT * FROM kuzi_pattern");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $kuziCountList[$row["id"]] = $row["max"];
         $kuziTotalCount += $row["max"];
     }
 
+    // 元々のくじ数から既に引いたくじ数を減らす
     $stmt = $pdo->query("SELECT * FROM kuzi_history");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $kuziCountList[$row["kuzi_pattern_id"]]--;
         if ( $kuziCountList[$row["kuzi_pattern_id"]] < 0 ) {
-            throw new Exception("くじがリセットされていないのでくじが引けません");
+            throw new Exception("データ不整合でくじが引けません");
         }
         $kuziTotalCount--;
         if ( $kuziTotalCount <= 0 ) {
@@ -34,26 +36,28 @@ try {
         }
     }
 
-    $index = mt_rand(0, $kuziTotalCount - 1);
+    // 抽選してどのパターンIDかを求める
+    $randIndex = mt_rand(0, $kuziTotalCount - 1);
     $lotteryId = -1;
     foreach ( $kuziCountList as $patternId => $rest ) {
        $lotteryId = $patternId;
-       $index -= $rest;
-       if ( $index < 0 ) {
+       $randIndex -= $rest;
+       if ( $randIndex < 0 ) {
            break;
        }
     }
     if ( $lotteryId < 0 ) {
-         throw new Exception("くじがリセットされていないのでくじが引けません");
+         throw new Exception("データ不整合でくじが引けません");
     }
 
+    // 引いたくじの履歴を残す
     $insert = <<<___EOS___
 INSERT INTO kuzi_history (kuzi_pattern_id, create_date) 
 VALUES (:lottery_id, now())
 ___EOS___;
     $stmt = $pdo->prepare($insert);
     $stmt->bindValue(':lottery_id', $lotteryId, PDO::PARAM_INT);
-    $ret = $stmt->execute();
+    $stmt->execute();
 
     // TODO: くじが空になった時の処理
     // https://github.com/arith-alexander/vpc_docker/issues/6
@@ -62,6 +66,7 @@ ___EOS___;
     exit('データベース接続失敗。' . $e->getMessage());
 }
 
+// どの画像を表示するかの場合わけ
 $lotteryImg = '';
 switch ( $lotteryId ) {
     case TYOUKITI_PATTERN_ID:
