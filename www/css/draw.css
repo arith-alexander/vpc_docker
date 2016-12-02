@@ -1,5 +1,9 @@
 /* draw.php */
 
+body {
+    display:none
+}
+
 .lottery, .lottery-contents{
     position:absolute;
 }
