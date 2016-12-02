@@ -1,5 +1,9 @@
 /* draw.php */
 
+body {
+    display:none
+}
+
 .lottery-image {
     width:100%
 }
