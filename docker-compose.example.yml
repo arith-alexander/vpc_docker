@@ -1,0 +1,32 @@
+version: '2'
+services:
+  mysql_svc:
+    build: ./services/mysql # Dockerfileがあるディレクトリ
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_USER: "example_user"
+      MYSQL_PASSWORD: "example_pass"
+      MYSQL_DATABASE: "example_db"
+    ports:
+      - '3306:3306' # VMの3306:Containerの3306
+    volumes:
+      - db_vlm:/var/lib/mysql # データ永続化のため、仮想ボリュームをMySQLデータディレクトリとしてマウント
+      # - ./initdb.d:/docker-entrypoint-initdb.d #オプション的な位置付けの初期化スクリプト。今回は不要
+  php_svc:
+    build: ./services/php # Dockerfileがあるディレクトリ
+    environment:
+      MYSQL_HOST: "mysql_svc"
+      MYSQL_USER: "example_user"
+      MYSQL_PASSWORD: "example_pass"
+      MYSQL_DATABASE: "example_db"
+      MYSQL_CHARSET: "utf8"
+    ports:
+      - '80:80' # VMの80:Containerの80
+    volumes:
+      - ./www:/var/www/html # ホストマシンの ./www を Containerの /var/www/html にマウント
+    links:
+      - mysql_svc
+    depends_on:
+      - mysql_svc
+volumes:
+  db_vlm:
