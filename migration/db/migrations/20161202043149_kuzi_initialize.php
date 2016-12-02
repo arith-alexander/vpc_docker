@@ -30,7 +30,6 @@ class KuziInitialize extends AbstractMigration
         $table1 = $this->table('kuzi_pattern');
         $table1->addColumn('name', 'string')
             ->addColumn('max', 'integer')
-            ->addColumn('rest', 'integer')
             ->create();
         $table2 = $this->table('kuzi_history');
         $table2->addColumn('kuzi_pattern_id', 'integer')
