@@ -5,6 +5,15 @@ define('DAIKITI_PATTERN_ID', 2);
 define('TYUUKITI_PATTERN_ID', 3);
 define('KITI_PATTERN_ID', 4);
 
+function kuziReset($pdo) {
+    $delete = <<<___EOS___
+DELETE FROM kuzi_history WHERE kuzi_pattern_id!=:pattern_id
+___EOS___;
+    $stmt = $pdo->prepare($delete);
+    $stmt->bindValue(':pattern_id', TYOUKITI_PATTERN_ID, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
 $kuziCountList = array();
 $kuziTotalCount = 0;
 try {
@@ -58,9 +67,10 @@ ___EOS___;
     $stmt = $pdo->prepare($insert);
     $stmt->bindValue(':lottery_id', $lotteryId, PDO::PARAM_INT);
     $stmt->execute();
-
-    // TODO: くじが空になった時の処理
-    // https://github.com/arith-alexander/vpc_docker/issues/6
+    if ( $kuziTotalCount <= 1 ) {
+        // くじが空になった時の処理
+        kuziReset($pdo);
+    }
 
 } catch (PDOException $e) {
     exit('データベース接続失敗。' . $e->getMessage());
