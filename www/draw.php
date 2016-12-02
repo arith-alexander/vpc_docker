@@ -1,4 +1,10 @@
 <?php
+
+define('TYOUKITI_PATTERN_ID', 1);
+define('DAIKITI_PATTERN_ID', 2);
+define('TYUUKITI_PATTERN_ID', 3);
+define('KITI_PATTERN_ID', 4);
+
 $kuziCountList = array();
 $kuziTotalCount = 0;
 try {
@@ -55,5 +61,37 @@ ___EOS___;
 } catch (PDOException $e) {
     exit('データベース接続失敗。' . $e->getMessage());
 }
+
+$lotteryImg = '';
+switch ( $lotteryId ) {
+    case TYOUKITI_PATTERN_ID:
+        $lotteryImg = '<img class="lottery-image" src="/img/tyoukiti.png" alt="超吉" />';
+        break;
+    case DAIKITI_PATTERN_ID:
+        $lotteryImg = '<img class="lottery-image" src="/img/daikiti.png" alt="大吉" />';
+        break;
+    case TYUUKITI_PATTERN_ID:
+        $lotteryImg = '<img class="lottery-image" src="/img/tyuukiti.png" alt="中吉" />';
+        break;
+    case KITI_PATTERN_ID:
+        $lotteryImg = '<img class="lottery-image" src="/img/kiti.png" alt="吉" />';
+        break;
+}
 ?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/draw.css">
+        <meta charset='utf-8'>
+        <title>おみくじ結果</title>
+    </head>
+
+    <body>
+        <div class="lottery">
+            <?php echo $lotteryImg; ?>
+        </div>
+    </body>
+</html>
 
